@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flat Cap Co. – Documentation Template Training</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+    <style>
+      <a href="index.html" class="link-button">Home</a>
+      body {
+        background-color: #f8f8f8;
+        padding: 2rem;
+      }
+      .email-training {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .email-training h1,
+      .email-training h2 {
+        color: #222;
+        margin-top: 2rem;
+      }
+      .email-training p,
+      .email-training ul,
+      .email-training ol {
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+      }
+      .email-section {
+        background: #fff;
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 2rem 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      }
+      .prompt-block {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f9f9f9;
+        border-left: 4px solid #e63946;
+        font-size: 0.98rem;
+      }
+    </style>
+      <a href="index.html" class="link-button">Home</a>
+  </head>
+  <body>
+    <section class="email-training">
+      <h1>
+        Example 2: Documentation – Turn What You Know Into a Reusable Template
+      </h1>
+
+      <h2>Why This Matters in Manufacturing Offices</h2>
+      <p>
+        Many office processes—like creating purchase requests, updating reports,
+        or managing vendor issues—are done from memory, shared verbally, or
+        hidden in old emails. That leads to inconsistent results, missed steps,
+        and knowledge loss when someone’s out.
+      </p>
+
+      <h3>You Might Need Documentation If:</h3>
+      <ul>
+        <li>People frequently ask you how to do something</li>
+        <li>You wish there were written instructions for what you do</li>
+        <li>You manage a task that involves handoffs between roles</li>
+        <li>You’ve taken over a responsibility but no one left notes</li>
+      </ul>
+
+      <div class="email-section">
+        <h2>Step 1: Describe a Process in Plain Language</h2>
+        <p>
+          <strong>What to Do:</strong> Think of a task or process you’re
+          responsible for. Describe it like you would to a new coworker
+          shadowing you. You're not writing a document yet—just explaining what
+          happens.
+        </p>
+        <ul>
+          <li>What the process is for</li>
+          <li>Who’s involved</li>
+          <li>How it starts and ends</li>
+          <li>What tools or systems are used</li>
+        </ul>
+        <div class="prompt-block">
+          <strong>Prompt to Enter in ChatGPT:</strong><br />
+          <code>Describe your process in plain language.</code>
+        </div>
+        <p><strong>Then paste your plain-language description.</strong></p>
+        <p><strong>After ChatGPT responds:</strong></p>
+        <ul>
+          <li>Read the output. Does it look like a document?</li>
+          <li>Would someone else understand it?</li>
+          <li>
+            Ask ChatGPT for edits: "Break this into steps" or "Make it easier to
+            follow."
+          </li>
+        </ul>
+      </div>
+
+      <div class="email-section">
+        <h2>Step 2: Use a Structured Prompt to Create a Better Document</h2>
+        <p>
+          Now try again with more direction. This gives ChatGPT context and
+          formatting guidance to return a usable document.
+        </p>
+        <div class="prompt-block">
+          <strong>Structured Prompt:</strong><br />
+          <code>
+            You are a documentation assistant. I’m creating a reusable document
+            that describes a task or process in our office. Here’s the
+            description of the process: [Paste your updated process description
+            here.] Please return a clear, structured document with the
+            following: - A title placeholder - Section headers with short
+            instructions - Friendly but professional formatting - Areas people
+            can fill in - Highlight anything people often forget - Suggest any
+            related documentation that may be needed
+          </code>
+        </div>
+        <p>After the output:</p>
+        <ul>
+          <li>Check for clarity and usefulness</li>
+          <li>Ask for adjustments: tone, layout, wording</li>
+          <li>Use "Edit in Canvas" if available to refine in real time</li>
+        </ul>
+      </div>
+
+      <div class="email-section">
+        <h2>Step 3: Save and Reuse Your Template</h2>
+        <p>
+          Ask ChatGPT to convert the final document into a reusable template
+          with placeholders and instructional tips.
+        </p>
+        <p>You can now:</p>
+        <ul>
+          <li>Save it as a Word doc or PDF</li>
+          <li>Store it in a shared folder or SOP library</li>
+          <li>Use it as a printable reference or editable file</li>
+        </ul>
+        <p><strong>Teach ChatGPT to reuse it:</strong></p>
+        <div class="prompt-block">
+          <code
+            >This is our preferred documentation format. Use this every time I
+            ask for a guide or SOP unless I say otherwise.</code
+          >
+        </div>
+        <p><strong>Advanced Option – Build a CustomGPT:</strong></p>
+        <ul>
+          <li>
+            Upload your structure and instructions, and prompt the guide to
+            create a document assistant at
+            <a href="https://chat.openai.com/create">chat.openai.com/create</a>
+          </li>
+          <li>
+            Build a private assistant that always uses your tone, format, and
+            sections. You can upload your template as a knowledge base file.
+          </li>
+        </ul>
+      </div>
+    </section>
+  </body>
+  <a href="index.html" class="link-button">Home</a>
+</html>

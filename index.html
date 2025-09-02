@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flat Cap Co.</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Flat Cap Co.</h1>
+        <nav>
+          <a href="#about">About</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#shop">Shop</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-text">
+            <h2>Flat Caps for the Whole Family</h2>
+        <p>From Grandpa to goldfish, we’ve got your head covered.</p>
+        <button onclick="document.getElementById('shop').scrollIntoView({behavior: 'smooth'});">
+          Shop Now
+        </button>
+      </div>
+      <img src="media/family.png" alt="Family in Flat Caps" />
+    </section>
+
+    <section id="about" class="info-block">
+      <img src="media/cats.gif" alt="Cats in Flat Caps" />
+      <h2>Our Story</h2>
+      <p>
+        Born from the love of timeless style, Flat Cap Co. brings handcrafted,
+        camouflage-patterned flat caps to every member of your family—including
+        pets. Functional, funky, and family-approved.
+      </p>
+    </section>
+
+    <section id="gallery" class="gallery">
+      <h2>Style in Action</h2>
+      <div class="grid">
+        <img src="media/crowd.png" alt="Crowd wearing flat caps" />
+        <img src="media/cat.png" alt="Cat in flat cap" />
+        <img src="media/fish.png" alt="Goldfish in flat cap" />
+        <img src="media/hat.png" alt="Flat cap product" />
+        <img src="media/man.png" alt="Man wearing flat cap" />
+      </div>
+    </section>
+
+    <section id="shop" class="shop">
+      <h2>Get Yours</h2>
+      <p>Our shop is coming soon! Until then, enjoy the music:</p>
+      <audio controls>
+        <source src="media/our-hats-are-flat.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+      <audio controls>
+        <source src="media/Greenheck_Pride.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </section>
+    <ul>
+    <a href="email.html" class="link-button">AI Training 1 - Communication</a><br>
+    <a href="docs.html" class="link-button">AI Training 2 - Documentation</a><br>
+    <a href="media.html" class="link-button">AI Training 3 - Media</a><br>  
+      <a href="research.html" class="link-button">AI Training 4 - Research</a><br> 
+
+    </ul>
+    <footer id="contact">
+      <p>
+        Want to partner or order in bulk?
+        <a href="mailto:info@flatcapco.example">Email us</a>.
+      </p>
+      <p>&copy; 2025 Flat Cap Co.</p>
+    </footer>
+  </body>
+</html>
