@@ -1,0 +1,325 @@
+import React, { useEffect, useMemo, useState } from "react";
+
+// NOTE
+// The prior content was a full HTML document (<!DOCTYPE html> ...), which causes
+// `SyntaxError: Unexpected token (1:0)` in a React/TypeScript entry like index.tsx.
+// This file is now a proper React component you can import/use as your page.
+// Example usage (Vite):
+//   import React from 'react'
+//   import ReactDOM from 'react-dom/client'
+//   import TrainingPage from './TrainingPage' // this file
+//   ReactDOM.createRoot(document.getElementById('root')!).render(<TrainingPage />)
+
+// --- Small helpers ---
+const useClipboard = () => {
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = (text: string, key: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(key);
+      setTimeout(() => setCopied(null), 1200);
+    });
+  };
+  return { copied, copy };
+};
+
+const Card: React.FC<React.PropsWithChildren<{ id?: string; meta?: string; title?: string }>> = ({ id, meta, title, children }) => (
+  <section id={id} style={styles.card}>
+    {meta && <div style={styles.meta}>{meta}</div>}
+    {title && <h2 style={styles.h2}>{title}</h2>}
+    {children}
+  </section>
+);
+
+const Btn: React.FC<React.AnchorHTMLAttributes<HTMLAnchorElement>> = ({ children, ...props }) => (
+  <a {...props} style={{ ...styles.btn, ...(props.style || {}) }} />
+);
+
+const PromptBox: React.FC<{ id: string; label: string; defaultValue: string; onCopy: (id: string, value: string) => void; copiedId: string | null }>
+= ({ id, label, defaultValue, onCopy, copiedId }) => {
+  const [value, setValue] = useState(defaultValue);
+  const isCopied = copiedId === id;
+  return (
+    <div>
+      <h3 style={styles.h3}>{label}</h3>
+      <textarea style={styles.textarea} id={id} value={value} onChange={(e) => setValue(e.target.value)} />
+      <a
+        role="button"
+        tabIndex={0}
+        onClick={() => onCopy(id, value)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onCopy(id, value); }}
+        style={{ ...styles.btn, marginTop: 6, display: 'inline-block' }}
+      >
+        {isCopied ? 'Copied' : 'Copy'}
+      </a>
+    </div>
+  );
+};
+
+// --- Page component ---
+export default function TrainingPage() {
+  // Scenario (kept simple; no header inputs per your request)
+  const scenario = {
+    company: 'Flat Cap Co.',
+    industry: 'fashion accessory manufacturing (flat caps)',
+    location: 'Wausau, Wisconsin',
+    productLine: 'Family Flat Caps',
+    siteUrl: 'https://willardwonder.github.io/ai',
+  };
+
+  const perplexityHref = useMemo(() => {
+    const q = encodeURIComponent('flat cap OR newsboy cap manufacturers in Wausau, Wisconsin competitor profiles');
+    return `https://www.perplexity.ai/search?q=${q}`;
+  }, []);
+
+  const { copied, copy } = useClipboard();
+  const onCopy = (id: string, value: string) => copy(value, id);
+
+  // ---- Self tests (lightweight) ----
+  const [failures, setFailures] = useState<string[]>([]);
+  useEffect(() => {
+    const f: string[] = [];
+    // Test 1: basic scenario glue
+    if (!scenario.company) f.push('Scenario company missing');
+    if (!perplexityHref.includes('perplexity.ai')) f.push('Perplexity link not built');
+    // Test 2: prompt presence sanity
+    const promptMap: Record<string, string[]> = {
+      perplexity: ['px-p1', 'px-p2'],
+      chatgpt: ['cg-p1', 'cg-p2'],
+      notebooklm: ['nlm-p1', 'nlm-p2'],
+      video: ['sora-p1', 'whisk-p1'],
+      gemini: ['gm-p1', 'gm-p2'],
+      pomelli: ['pm-p1'],
+    };
+    Object.entries(promptMap).forEach(([section, ids]) => {
+      if (ids.length === 0) f.push(`No prompts listed for ${section}`);
+    });
+    setFailures(f);
+  }, [perplexityHref]);
+
+  return (
+    <div style={styles.page}>
+      {failures.length > 0 && (
+        <div style={styles.banner} role="status" aria-live="polite">
+          <strong>Self-test failures: </strong>
+          <ul style={{ margin: 0, paddingLeft: 16 }}>
+            {failures.map((e, i) => (<li key={i}>{e}</li>))}
+          </ul>
+        </div>
+      )}
+
+      <header style={styles.header}>
+        <div style={styles.wrap}>
+          <div>
+            <div style={styles.title}>AI Training — Flat Cap Co.</div>
+            <div style={styles.meta}>Perplexity → ChatGPT → NotebookLM → Sora → Whisk → Gemini → Pomelli</div>
+          </div>
+          <div>
+            <Btn href="/ai" aria-label="Training site root">/ai</Btn>
+          </div>
+        </div>
+      </header>
+
+      <main style={{ ...styles.wrap, ...styles.grid }}>
+        <div>
+          <Card id="intro" meta="0:00–0:10" title="Introduction & Framing">
+            <ul>
+              <li>Scenario: {scenario.company} — {scenario.industry} in {scenario.location}.</li>
+              <li>Training/analysis site for demos: <a href={scenario.siteUrl} target="_blank" rel="noreferrer">{scenario.siteUrl.replace('https://','')}</a></li>
+              <li>Outputs: market brief, CX responses, slide outline, short+long video, site audit, brand assets.</li>
+            </ul>
+          </Card>
+
+          <Card id="perplexity" meta="0:10–0:25" title="Perplexity — Research & Market Intelligence">
+            <ol>
+              <li>Open Perplexity with prefilled competitor query.</li>
+              <li>Extract top 5 competitors and differentiators.</li>
+              <li>Use results downstream.</li>
+            </ol>
+            <div style={{ marginTop: 8 }}>
+              <Btn href={perplexityHref} target="_blank" rel="noreferrer">Open Perplexity</Btn>
+            </div>
+            <div style={styles.prompts}> 
+              <PromptBox
+                id="px-p1"
+                label="Prompt 1"
+                defaultValue={`Profile the top 5 manufacturers related to flat caps / newsboy caps in or serving ${scenario.location}. For each: value proposition, pricing posture, recent launches, customer sentiment with citations, and three differentiators. Return a table plus 5‑source bibliography.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+              <PromptBox
+                id="px-p2"
+                label="Prompt 2"
+                defaultValue={`Compare ${scenario.company} vs. the strongest competitor on features, ICP, GTM motion, and switching risks. Return a 1‑page brief.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+            </div>
+          </Card>
+
+          <Card id="chatgpt" meta="0:25–0:45" title="ChatGPT — Sentiment & Professional Responses">
+            <ol>
+              <li>Paste review excerpts.</li>
+              <li>Get sentiment + themes.</li>
+              <li>Generate response templates.</li>
+            </ol>
+            <div style={{ marginTop: 8 }}>
+              <Btn href="https://chat.openai.com/" target="_blank" rel="noreferrer">Open ChatGPT</Btn>
+            </div>
+            <div style={styles.prompts}>
+              <PromptBox
+                id="cg-p1"
+                label="Prompt 1"
+                defaultValue={`You are a CX lead at ${scenario.company}. Analyze the pasted customer reviews for the ${scenario.productLine}. Output: (1) sentiment% + top themes, (2) 3 policy fixes, (3) response templates by theme in a warm, professional tone.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+              <PromptBox
+                id="cg-p2"
+                label="Prompt 2"
+                defaultValue={`Draft a reply to this negative review that acknowledges the issue, offers a remedy, and invites private follow‑up. Keep it under 120 words.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+            </div>
+          </Card>
+
+          <Card id="notebooklm" meta="0:45–1:00" title="Google NotebookLM — Product Knowledge to Slides/Video">
+            <ol>
+              <li>Paste or upload product facts.</li>
+              <li>Ask for feature summary + objections.</li>
+              <li>Export slide outline + narration script.</li>
+            </ol>
+            <div style={{ marginTop: 8 }}>
+              <Btn href="https://notebooklm.google.com/" target="_blank" rel="noreferrer">Open NotebookLM</Btn>
+            </div>
+            <div style={styles.prompts}>
+              <PromptBox
+                id="nlm-p1"
+                label="Prompt 1"
+                defaultValue={`From the provided notes, create a 6‑slide overview of the ${scenario.productLine}: audience, 3 key features, top objections + answers, and ROI talking points.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+              <PromptBox
+                id="nlm-p2"
+                label="Prompt 2"
+                defaultValue={`Draft a 60–90s video narration script introducing the product line for internal enablement.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+            </div>
+          </Card>
+
+          <Card id="video" meta="1:00–1:25" title="Sora & Whisk — Generative Video">
+            <ol>
+              <li>Sora: 15s commercial.</li>
+              <li>Whisk: 45–60s version.</li>
+            </ol>
+            <div style={styles.prompts}>
+              <div>
+                <h3 style={styles.h3}>Sora Prompt</h3>
+                <Btn href="https://openai.com/sora" target="_blank" rel="noreferrer">Open Sora</Btn>
+                <textarea id="sora-p1" style={{ ...styles.textarea, marginTop: 6 }} defaultValue={`Sora 15s ad: upbeat, modern. Product: ${scenario.productLine}. Scenes: 1) hook problem, 2) product moment, 3) CTA. Overlay copy: “Meet ${scenario.productLine}”. End frame URL: ${scenario.siteUrl}.`} />
+                <a role="button" tabIndex={0} onClick={() => onCopy('sora-p1', (document.getElementById('sora-p1') as HTMLTextAreaElement).value)} style={{ ...styles.btn, marginTop: 6, display: 'inline-block' }}> {copied === 'sora-p1' ? 'Copied' : 'Copy'} </a>
+              </div>
+              <div>
+                <h3 style={styles.h3}>Whisk Prompt</h3>
+                <Btn href="https://www.whisk.com/" target="_blank" rel="noreferrer">Open Whisk</Btn>
+                <textarea id="whisk-p1" style={{ ...styles.textarea, marginTop: 6 }} defaultValue={`Whisk 45–60s: add testimonials, feature close‑ups, calmer brand voice. Maintain logo safety area and end slate for ${scenario.company}. Optional alt cut: captions‑only, no VO, sized for Reels/TikTok.`} />
+                <a role="button" tabIndex={0} onClick={() => onCopy('whisk-p1', (document.getElementById('whisk-p1') as HTMLTextAreaElement).value)} style={{ ...styles.btn, marginTop: 6, display: 'inline-block' }}> {copied === 'whisk-p1' ? 'Copied' : 'Copy'} </a>
+              </div>
+            </div>
+          </Card>
+
+          <Card id="gemini" meta="1:25–1:40" title="Gemini — Website & Brand Analysis">
+            <ol>
+              <li>Analyze training site.</li>
+              <li>List quick‑win UX/SEO improvements.</li>
+              <li>Prioritize by impact/effort.</li>
+            </ol>
+            <div style={{ marginTop: 8 }}>
+              <Btn href="https://gemini.google.com/" target="_blank" rel="noreferrer">Open Gemini</Btn>
+            </div>
+            <div style={styles.prompts}>
+              <PromptBox
+                id="gm-p1"
+                label="Prompt 1"
+                defaultValue={`Analyze ${scenario.siteUrl} for brand voice, ICP clarity, conversion friction, and 5 revenue opportunities. Return a 2×2 impact/effort matrix.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+              <PromptBox
+                id="gm-p2"
+                label="Prompt 2"
+                defaultValue={`Rewrite the homepage H1/H2 and top CTA to improve clarity and conversion — keep the brand tone.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+            </div>
+          </Card>
+
+          <Card id="pomelli" meta="1:40–1:55" title="Pomelli — On‑Brand Marketing Assets">
+            <ol>
+              <li>Extract brand system from the training site.</li>
+              <li>Generate flyers, posts, and ad copy.</li>
+            </ol>
+            <div style={{ marginTop: 8 }}>
+              <Btn href="https://pomelli.app/" target="_blank" rel="noreferrer">Open Pomelli</Btn>
+            </div>
+            <div style={styles.prompts}>
+              <PromptBox
+                id="pm-p1"
+                label="Prompt 1"
+                defaultValue={`From ${scenario.siteUrl}, infer brand palette, fonts, and tone. Create: (a) LinkedIn post, (b) A4 flyer, (c) 1080×1080 social graphic with headline + CTA for ${scenario.productLine}. Provide editable copy blocks and alt‑text for accessibility.`}
+                onCopy={onCopy}
+                copiedId={copied}
+              />
+            </div>
+          </Card>
+
+          <Card id="wrap" meta="1:55–2:00" title="Wrap‑Up — Principles & Next Steps">
+            <ul>
+              <li>Be Patient, Persistent, and Paranoid.</li>
+              <li>There’s no one best practice — build what works.</li>
+            </ul>
+          </Card>
+        </div>
+
+        <nav aria-label="Timeline" style={styles.toc}>
+          <div style={styles.meta}>Timeline</div>
+          <a href="#intro" style={styles.tocLink}><span>Introduction</span><span style={styles.meta}>0:00–0:10</span></a>
+          <a href="#perplexity" style={styles.tocLink}><span>Perplexity</span><span style={styles.meta}>0:10–0:25</span></a>
+          <a href="#chatgpt" style={styles.tocLink}><span>ChatGPT</span><span style={styles.meta}>0:25–0:45</span></a>
+          <a href="#notebooklm" style={styles.tocLink}><span>NotebookLM</span><span style={styles.meta}>0:45–1:00</span></a>
+          <a href="#video" style={styles.tocLink}><span>Sora & Whisk</span><span style={styles.meta}>1:00–1:25</span></a>
+          <a href="#gemini" style={styles.tocLink}><span>Gemini</span><span style={styles.meta}>1:25–1:40</span></a>
+          <a href="#pomelli" style={styles.tocLink}><span>Pomelli</span><span style={styles.meta}>1:40–1:55</span></a>
+          <a href="#wrap" style={styles.tocLink}><span>Wrap‑Up</span><span style={styles.meta}>1:55–2:00</span></a>
+        </nav>
+      </main>
+
+      <footer style={{ ...styles.wrap, color: '#666', fontSize: 13, margin: '40px auto 60px' }}>
+        © {new Date().getFullYear()} Flat Cap Co. • Use freely for training
+      </footer>
+    </div>
+  );
+}
+
+// --- Styles (inline to avoid external deps) ---
+const styles: Record<string, React.CSSProperties> = {
+  page: { background: '#f6f7fb', color: '#111', minHeight: '100vh' },
+  header: { position: 'sticky', top: 0, zIndex: 10, background: 'rgba(255,255,255,.9)', borderBottom: '1px solid #e6e8ef', backdropFilter: 'saturate(180%) blur(8px)' },
+  wrap: { maxWidth: 1100, margin: '0 auto', padding: '12px 16px' },
+  title: { fontWeight: 700 as const, fontSize: 18 },
+  meta: { fontSize: 12, color: '#666' },
+  grid: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 300px', gap: 16 } as React.CSSProperties,
+  card: { background: '#fff', border: '1px solid #e6e8ef', borderRadius: 16, padding: 16, boxShadow: '0 6px 16px rgba(0,0,0,.04)', marginBottom: 16 },
+  h2: { margin: '6px 0 2px 0', fontSize: 22 },
+  h3: { margin: '14px 0 6px 0', fontSize: 15 },
+  btn: { border: '1px solid #e6e8ef', borderRadius: 12, padding: '8px 12px', fontSize: 14, background: '#fff', textDecoration: 'none', cursor: 'pointer' },
+  textarea: { width: '100%', minHeight: 120, border: '1px solid #e6e8ef', borderRadius: 12, padding: 10, fontFamily: 'inherit' },
+  prompts: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 } as React.CSSProperties,
+  toc: { background: '#fff', border: '1px solid #e6e8ef', borderRadius: 16, padding: 12, boxShadow: '0 6px 16px rgba(0,0,0,.04)', height: 'fit-content', position: 'sticky', top: 76 },
+  tocLink: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 10, textDecoration: 'none', color: 'inherit' },
+  banner: { display: 'flex', gap: 10, alignItems: 'flex-start', padding: '10px 12px', borderBottom: '1px solid #e6e8ef', background: '#fff3f2', color: '#b3261e' },
+};
